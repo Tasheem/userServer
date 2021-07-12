@@ -10,7 +10,7 @@ func root(res http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/", root)
+	http.HandleFunc("/api", root)
 	err := http.ListenAndServe(":8000", nil)
 	if err != nil {
 		log.Fatal(err)
