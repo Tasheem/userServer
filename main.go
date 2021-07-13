@@ -8,6 +8,7 @@ import (
 
 	"github.com/Tasheem/userServer/models"
 	"github.com/Tasheem/userServer/services"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func createUser(res http.ResponseWriter, req *http.Request) {

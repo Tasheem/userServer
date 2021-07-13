@@ -4,8 +4,8 @@ import "github.com/google/uuid"
 
 type User struct {
 	Id        uuid.UUID
-	FirstName string
-	LastName  string
-	UserName  string
-	Password  string
+	FirstName string `json:"First Name"`
+	LastName  string `json:"Last Name"`
+	UserName  string `json:"Username"`
+	Password  string `json:"Password"`
 }
