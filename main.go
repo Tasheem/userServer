@@ -39,9 +39,28 @@ func createUser(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
+func getUser(res http.ResponseWriter, req *http.Request) {
+	users, err := services.GetUsers()
+	if err != nil {
+		http.Error(res, "Error Fetching Users.", http.StatusInternalServerError)
+		return
+	}
+
+	res.Header().Add("Content-Type", "application/json")
+	err = json.NewEncoder(res).Encode(users)
+	if err != nil {
+		fmt.Println("Error Encoding Object to JSON")
+		fmt.Println(err)
+		http.Error(res, "Error Fetching Users.", http.StatusInternalServerError)
+		return
+	}
+}
+
 func user(res http.ResponseWriter, req *http.Request) {
 	if req.Method == "POST" {
 		createUser(res, req)
+	} else if req.Method == "GET" {
+		getUser(res, req)
 	}
 }
 

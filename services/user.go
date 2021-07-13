@@ -19,3 +19,7 @@ func CreateUser(u models.User) error {
 
 	return nil
 }
+
+func GetUsers() ([]models.User, error) {
+	return dao.Query()
+}

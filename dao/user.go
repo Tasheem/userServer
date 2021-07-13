@@ -54,20 +54,43 @@ func createDBIfDoesNotExist() (*sql.DB, error) {
 	return db, err
 }
 
-func Save(u models.User) error {
+func Query() ([]models.User, error) {
 	db, err := createDBIfDoesNotExist()
 	if err != nil {
 		fmt.Println(err)
-		return err
 	}
 
+	defer db.Close()
+	query := "SELECT * FROM users;"
+
+	rows, err := db.Query(query)
 	if err != nil {
-		fmt.Println("dao->Save: Error Opening SQL Connection statement")
+		fmt.Println("Error Executing Query")
+		fmt.Println(err)
+		// return empty slice
+		return []models.User{}, err
+	}
+
+	var users []models.User
+	for rows.Next() {
+		var user models.User
+		rows.Scan(&user.Id, &user.FirstName, &user.LastName, &user.UserName, &user.Password)
+		users = append(users, user)
+	}
+
+	return users, err
+}
+
+func Save(u models.User) error {
+	db, err := createDBIfDoesNotExist()
+	// If error, tcp connection is already closed.
+	if err != nil {
 		fmt.Println(err)
 		return err
 	}
-	defer db.Close()
 
+	// If no error, defer closing of tcp connection.
+	defer db.Close()
 	insert := fmt.Sprintf("INSERT INTO users VALUES (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\");",
 		u.Id.String(), u.FirstName, u.LastName, u.UserName, u.Password)
 
