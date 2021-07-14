@@ -64,7 +64,7 @@ func getUser(res http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			fmt.Println("Error From User Service")
 			fmt.Println(err)
-			http.Error(res, "Error Fetching Users.", http.StatusInternalServerError)
+			http.Error(res, "Error Fetching Users.", http.StatusUnauthorized)
 			return
 		}
 

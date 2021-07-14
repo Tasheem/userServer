@@ -63,17 +63,14 @@ func QueryUser(username, password string) (models.User, error) {
 	defer db.Close()
 	query := fmt.Sprintf("SELECT * FROM users WHERE username = \"%s\" AND password = \"%s\";", username, password)
 	// fmt.Printf("QUERY: %s", query)
-	row, err := db.Query(query)
+	row := db.QueryRow(query)
+
+	var user models.User
+	err = row.Scan(&user.Id, &user.FirstName, &user.LastName, &user.UserName, &user.Password)
 
 	if err != nil {
-		fmt.Println("Error fetching user")
-		fmt.Println(err)
-		return models.User{}, err
+		return user, err
 	}
-
-	row.Next()
-	var user models.User
-	row.Scan(&user.Id, &user.FirstName, &user.LastName, &user.UserName, &user.Password)
 
 	return user, nil
 }
