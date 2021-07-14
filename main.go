@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/Tasheem/userServer/models"
 	"github.com/Tasheem/userServer/services"
@@ -40,27 +41,72 @@ func createUser(res http.ResponseWriter, req *http.Request) {
 }
 
 func getUser(res http.ResponseWriter, req *http.Request) {
-	users, err := services.GetUsers()
-	if err != nil {
-		http.Error(res, "Error Fetching Users.", http.StatusInternalServerError)
-		return
-	}
+	/* origin := req.RemoteAddr
+	fmt.Printf("Origin: %v", origin)
 
-	res.Header().Add("Content-Type", "application/json")
-	err = json.NewEncoder(res).Encode(users)
-	if err != nil {
-		fmt.Println("Error Encoding Object to JSON")
-		fmt.Println(err)
-		http.Error(res, "Error Fetching Users.", http.StatusInternalServerError)
+	if origin != "localhost:9000" {
+		http.Error(res, "Unauthorized Origin", http.StatusForbidden)
 		return
+	} */
+
+	url := req.URL
+	containsQueryString := strings.Contains(url.String(), "?")
+
+	if containsQueryString {
+		queryParams := url.Query()
+		username := queryParams.Get("Username")
+		password := queryParams.Get("Password")
+
+		fmt.Println(username)
+		fmt.Println(password)
+
+		result, err := services.GetUser(username, password)
+		if err != nil {
+			fmt.Println("Error From User Service")
+			fmt.Println(err)
+			http.Error(res, "Error Fetching Users.", http.StatusInternalServerError)
+			return
+		}
+
+		res.Header().Add("Access-Control-Allow-Origin", "*")
+		res.Header().Add("Content-Type", "application/json")
+		res.WriteHeader(http.StatusOK)
+		err = json.NewEncoder(res).Encode(result)
+		if err != nil {
+			fmt.Println("Error Encoding Object to JSON")
+			fmt.Println(err)
+			http.Error(res, "Error Fetching Users.", http.StatusInternalServerError)
+		}
+	} else {
+		users, err := services.GetUsers()
+		if err != nil {
+			http.Error(res, "Error Fetching Users.", http.StatusInternalServerError)
+			return
+		}
+
+		res.Header().Add("Content-Type", "application/json")
+		err = json.NewEncoder(res).Encode(users)
+		if err != nil {
+			fmt.Println("Error Encoding Object to JSON")
+			fmt.Println(err)
+			http.Error(res, "Error Fetching Users.", http.StatusInternalServerError)
+			return
+		}
 	}
 }
 
-func user(res http.ResponseWriter, req *http.Request) {
+func preflightUser(res http.ResponseWriter, req *http.Request) {
+	res.Header().Add("Access-Control-Allow-Origin", "*")
+	res.Header().Add("Content-Type", "application/json")
+}
+
+func handleUsers(res http.ResponseWriter, req *http.Request) {
 	if req.Method == "POST" {
 		createUser(res, req)
 	} else if req.Method == "GET" {
 		getUser(res, req)
+	} else if req.Method == "OPTIONS" {
+		preflightUser(res, req)
 	}
 }
 
@@ -70,7 +116,7 @@ func root(res http.ResponseWriter, req *http.Request) {
 
 func main() {
 	http.HandleFunc("/api", root)
-	http.HandleFunc("/api/user", user)
+	http.HandleFunc("/api/user", handleUsers)
 	err := http.ListenAndServe(":8000", nil)
 	if err != nil {
 		log.Fatal(err)

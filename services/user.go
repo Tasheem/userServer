@@ -20,6 +20,10 @@ func CreateUser(u models.User) error {
 	return nil
 }
 
+func GetUser(username, password string) (models.User, error) {
+	return dao.QueryUser(username, password)
+}
+
 func GetUsers() ([]models.User, error) {
-	return dao.Query()
+	return dao.QueryAll()
 }

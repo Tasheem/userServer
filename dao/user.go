@@ -54,7 +54,31 @@ func createDBIfDoesNotExist() (*sql.DB, error) {
 	return db, err
 }
 
-func Query() ([]models.User, error) {
+func QueryUser(username, password string) (models.User, error) {
+	db, err := createDBIfDoesNotExist()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	defer db.Close()
+	query := fmt.Sprintf("SELECT * FROM users WHERE username = \"%s\" AND password = \"%s\";", username, password)
+	// fmt.Printf("QUERY: %s", query)
+	row, err := db.Query(query)
+
+	if err != nil {
+		fmt.Println("Error fetching user")
+		fmt.Println(err)
+		return models.User{}, err
+	}
+
+	row.Next()
+	var user models.User
+	row.Scan(&user.Id, &user.FirstName, &user.LastName, &user.UserName, &user.Password)
+
+	return user, nil
+}
+
+func QueryAll() ([]models.User, error) {
 	db, err := createDBIfDoesNotExist()
 	if err != nil {
 		fmt.Println(err)
