@@ -42,9 +42,9 @@ func createUser(res http.ResponseWriter, req *http.Request) {
 
 func getUser(res http.ResponseWriter, req *http.Request) {
 	/* origin := req.RemoteAddr
-	fmt.Printf("Origin: %v", origin)
+	fmt.Printf("Origin: %v\n", origin)
 
-	if origin != "localhost:9000" {
+	if origin != "localhost:4000" {
 		http.Error(res, "Unauthorized Origin", http.StatusForbidden)
 		return
 	} */
@@ -57,8 +57,8 @@ func getUser(res http.ResponseWriter, req *http.Request) {
 		username := queryParams.Get("Username")
 		password := queryParams.Get("Password")
 
-		fmt.Println(username)
-		fmt.Println(password)
+		fmt.Printf("Username: %s\n", username)
+		fmt.Printf("Password: %s\n", password)
 
 		result, err := services.GetUser(username, password)
 		if err != nil {
@@ -95,18 +95,11 @@ func getUser(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func preflightUser(res http.ResponseWriter, req *http.Request) {
-	res.Header().Add("Access-Control-Allow-Origin", "*")
-	res.Header().Add("Content-Type", "application/json")
-}
-
 func handleUsers(res http.ResponseWriter, req *http.Request) {
 	if req.Method == "POST" {
 		createUser(res, req)
 	} else if req.Method == "GET" {
 		getUser(res, req)
-	} else if req.Method == "OPTIONS" {
-		preflightUser(res, req)
 	}
 }
 
