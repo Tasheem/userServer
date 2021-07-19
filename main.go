@@ -68,7 +68,6 @@ func getUser(res http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		res.Header().Add("Access-Control-Allow-Origin", "*")
 		res.Header().Add("Content-Type", "application/json")
 		res.WriteHeader(http.StatusOK)
 		err = json.NewEncoder(res).Encode(result)
