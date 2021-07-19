@@ -41,13 +41,8 @@ func createUser(res http.ResponseWriter, req *http.Request) {
 }
 
 func getUser(res http.ResponseWriter, req *http.Request) {
-	/* origin := req.RemoteAddr
-	fmt.Printf("Origin: %v\n", origin)
-
-	if origin != "localhost:4000" {
-		http.Error(res, "Unauthorized Origin", http.StatusForbidden)
-		return
-	} */
+	header := req.Header.Get("X-Forwarded-For")
+	fmt.Printf("X-Forwarded-For: %v\n", header)
 
 	url := req.URL
 	containsQueryString := strings.Contains(url.String(), "?")
@@ -101,7 +96,18 @@ func getUser(res http.ResponseWriter, req *http.Request) {
 }
 
 func handleUsers(res http.ResponseWriter, req *http.Request) {
-	fmt.Printf("Method: %v\n", req.Method);
+	// origin := req.RemoteAddr --> Gets client's hostname correct but gets port incorrect.
+	// Client is required to add "Origin" header in request.
+	origin := req.Header.Get("Origin")
+	fmt.Printf("Origin: %v\n", origin)
+
+	// Prevent access to these resources unless client is authServer.
+	if origin != "localhost:4000" {
+		http.Error(res, "Unauthorized Origin", http.StatusForbidden)
+		return
+	}
+
+	fmt.Printf("Method: %v\n", req.Method)
 	if req.Method == "POST" {
 		createUser(res, req)
 	} else if req.Method == "GET" {
@@ -110,6 +116,16 @@ func handleUsers(res http.ResponseWriter, req *http.Request) {
 }
 
 func root(res http.ResponseWriter, req *http.Request) {
+	// origin := req.RemoteAddr --> Gets client's hostname correct but gets port incorrect.
+	origin := req.Header.Get("Origin")
+	fmt.Printf("Origin: %v\n", origin)
+
+	// Prevent any client from access except for authServer.
+	if origin != "localhost:4000" {
+		http.Error(res, "Unauthorized Origin", http.StatusForbidden)
+		return
+	}
+
 	res.Write([]byte("User API"))
 }
 
