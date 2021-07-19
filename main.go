@@ -64,7 +64,12 @@ func getUser(res http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			fmt.Println("Error From User Service")
 			fmt.Println(err)
-			http.Error(res, "Error Fetching Users.", http.StatusUnauthorized)
+
+			if err.Error() == "user does not exist" {
+				http.Error(res, "No Record of User", http.StatusUnauthorized)
+			} else {
+				http.Error(res, "Error Fetching Users.", http.StatusInternalServerError)
+			}
 			return
 		}
 
@@ -96,6 +101,7 @@ func getUser(res http.ResponseWriter, req *http.Request) {
 }
 
 func handleUsers(res http.ResponseWriter, req *http.Request) {
+	fmt.Printf("Method: %v\n", req.Method);
 	if req.Method == "POST" {
 		createUser(res, req)
 	} else if req.Method == "GET" {

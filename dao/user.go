@@ -2,6 +2,7 @@ package dao
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/Tasheem/userServer/models"
@@ -69,7 +70,8 @@ func QueryUser(username, password string) (models.User, error) {
 	err = row.Scan(&user.Id, &user.FirstName, &user.LastName, &user.UserName, &user.Password)
 
 	if err != nil {
-		return user, err
+		fmt.Printf("Error scanning row in QueryUser function --> error message: %v\n", err);
+		return user, errors.New("user does not exist")
 	}
 
 	return user, nil
