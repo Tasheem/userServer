@@ -51,7 +51,7 @@ func createDBIfDoesNotExist() (*sql.DB, error) {
 		return nil, err
 	}
 
-	// Tcp Connection is still open if we make it this far.
+	// TCP Connection is still open if we make it this far.
 	return db, err
 }
 
@@ -59,6 +59,7 @@ func QueryUser(username, password string) (models.User, error) {
 	db, err := createDBIfDoesNotExist()
 	if err != nil {
 		fmt.Println(err)
+		return models.User{}, err
 	}
 
 	defer db.Close()
@@ -81,6 +82,7 @@ func QueryAll() ([]models.User, error) {
 	db, err := createDBIfDoesNotExist()
 	if err != nil {
 		fmt.Println(err)
+		return []models.User{}, err
 	}
 
 	defer db.Close()
