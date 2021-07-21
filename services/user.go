@@ -24,6 +24,10 @@ func GetUser(username, password string) (models.User, error) {
 	return dao.QueryUser(username, password)
 }
 
+func GetUserByID(id string) (models.User, error) {
+	return dao.QueryUserById(id)
+}
+
 func GetUsers() ([]models.User, error) {
 	return dao.QueryAll()
 }

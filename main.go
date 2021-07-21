@@ -49,6 +49,34 @@ func getUser(res http.ResponseWriter, req *http.Request) {
 
 	if containsQueryString {
 		queryParams := url.Query()
+
+		id := queryParams.Get("Id")
+		if id != "" {
+			fmt.Printf("ID: %s\n", id)
+			result, err := services.GetUserByID(id)
+			if err != nil {
+				fmt.Println("Error From User Service")
+				fmt.Println(err)
+
+				if err.Error() == "user does not exist" {
+					http.Error(res, "No Record of User", http.StatusUnauthorized)
+				} else {
+					http.Error(res, "Error Fetching Users.", http.StatusInternalServerError)
+				}
+				return
+			}
+
+			res.Header().Add("Content-Type", "application/json")
+			res.WriteHeader(http.StatusOK)
+			err = json.NewEncoder(res).Encode(result)
+			if err != nil {
+				fmt.Println("Error Encoding Object to JSON")
+				fmt.Println(err)
+				http.Error(res, "Error Fetching Users.", http.StatusInternalServerError)
+			}
+			return
+		}
+
 		username := queryParams.Get("Username")
 		password := queryParams.Get("Password")
 
@@ -76,7 +104,7 @@ func getUser(res http.ResponseWriter, req *http.Request) {
 			fmt.Println(err)
 			http.Error(res, "Error Fetching Users.", http.StatusInternalServerError)
 		}
-	} else {
+	} else { // else get all users
 		users, err := services.GetUsers()
 		if err != nil {
 			http.Error(res, "Error Fetching Users.", http.StatusInternalServerError)

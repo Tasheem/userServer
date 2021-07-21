@@ -77,6 +77,29 @@ func QueryUser(username, password string) (models.User, error) {
 
 	return user, nil
 }
+// add function to query database for user by id
+func QueryUserById(id string) (models.User, error) {
+	db, err := createDBIfDoesNotExist()
+	if err != nil {
+		fmt.Println(err)
+		return models.User{}, err
+	}
+
+	defer db.Close()
+	query := fmt.Sprintf("SELECT * FROM users WHERE id = \"%s\";", id)
+	// fmt.Printf("QUERY: %s", query)
+	row := db.QueryRow(query)
+
+	var user models.User
+	err = row.Scan(&user.Id, &user.FirstName, &user.LastName, &user.UserName, &user.Password)
+
+	if err != nil {
+		fmt.Printf("Error scanning row in QueryUser function --> error message: %v\n", err);
+		return user, errors.New("user does not exist")
+	}
+
+	return user, nil
+}
 
 func QueryAll() ([]models.User, error) {
 	db, err := createDBIfDoesNotExist()
