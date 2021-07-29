@@ -3,9 +3,9 @@ package models
 import "github.com/google/uuid"
 
 type User struct {
-	Id        uuid.UUID
-	FirstName string `json:"First Name"`
-	LastName  string `json:"Last Name"`
-	UserName  string `json:"Username"`
-	Password  string `json:"Password"`
+	Id        uuid.UUID `json:"id"`
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	UserName  string `json:"username"`
+	Password  string `json:"password"`
 }
