@@ -29,9 +29,7 @@ func createUser(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	go func() {
-		fmt.Printf("JSON Object: %v\n", user)
-	}()
+	fmt.Printf("JSON Object: %v\n", user)
 
 	err := services.CreateUser(user)
 	if err != nil {
@@ -153,20 +151,29 @@ func updateUser(res http.ResponseWriter, req *http.Request) {
 }
 
 func deleteUser(res http.ResponseWriter, req *http.Request) {
+	userID := path.Base(req.URL.String())
+	fmt.Printf("Path Param: %s\n", userID)
 
+	err := services.DeleteUser(userID)
+	if err != nil {
+		http.Error(res, "Error Creating User.", http.StatusInternalServerError)
+		return
+	} else {
+		res.Write([]byte("User Successfully Deleted."))
+	}
 }
 
 func handleUsers(res http.ResponseWriter, req *http.Request) {
 	// origin := req.RemoteAddr --> Gets client's hostname correct but gets port incorrect.
 	// Client is required to add "Origin" header in request.
-	/*origin := req.Header.Get("Origin")
+	origin := req.Header.Get("Origin")
 	fmt.Printf("Origin: %v\n", origin)
 
 	// Prevent access to these resources unless client is authServer.
 	if origin != "localhost:4000" {
 		http.Error(res, "Unauthorized Origin", http.StatusForbidden)
 		return
-	}*/
+	}
 
 	fmt.Printf("Method: %v\n", req.Method)
 	if req.Method == "POST" {

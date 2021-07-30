@@ -35,3 +35,7 @@ func GetUsers() ([]models.User, error) {
 func UpdateUser(user models.User, userID string) error {
 	return dao.Update(userID, user.FirstName, user.LastName)
 }
+
+func DeleteUser(userID string) error {
+	return dao.Delete(userID)
+}

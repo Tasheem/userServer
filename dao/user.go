@@ -168,9 +168,32 @@ func Update(id, firstName, lastName string) error {
 
 	_, err = db.Exec(updateStatement)
 	if err != nil {
-		fmt.Println("dao->update: Error With UPDATE statement")
+		fmt.Println("dao->Update: Error With UPDATE statement")
 		fmt.Println(err)
 		fmt.Printf("Update Statement: %s", updateStatement)
+		return err
+	}
+
+	return err
+}
+
+func Delete(userID string) error {
+	db, err := createDBIfDoesNotExist()
+	// If error, tcp connection is already closed.
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	// If no error, defer closing of tcp connection.
+	defer db.Close()
+	deleteStatement := fmt.Sprintf("DELETE FROM users WHERE id = \"%s\"", userID)
+
+	_, err = db.Exec(deleteStatement)
+	if err != nil {
+		fmt.Println("dao->Delete: Error With DELETE statement")
+		fmt.Println(err)
+		fmt.Printf("DELETE Statement: %s", deleteStatement)
 		return err
 	}
 
