@@ -31,3 +31,7 @@ func GetUserByID(id string) (models.User, error) {
 func GetUsers() ([]models.User, error) {
 	return dao.QueryAll()
 }
+
+func UpdateUser(user models.User, userID string) error {
+	return dao.Update(userID, user.FirstName, user.LastName)
+}

@@ -77,7 +77,7 @@ func QueryUser(username, password string) (models.User, error) {
 
 	return user, nil
 }
-// add function to query database for user by id
+
 func QueryUserById(id string) (models.User, error) {
 	db, err := createDBIfDoesNotExist()
 	if err != nil {
@@ -147,6 +147,30 @@ func Save(u models.User) error {
 		fmt.Println("dao->Save: Error With INSERT statement")
 		fmt.Println(err)
 		fmt.Printf("Insert Statement: %s", insert)
+		return err
+	}
+
+	return err
+}
+
+func Update(id, firstName, lastName string) error {
+	db, err := createDBIfDoesNotExist()
+	// If error, tcp connection is already closed.
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	// If no error, defer closing of tcp connection.
+	defer db.Close()
+	updateStatement := fmt.Sprintf("UPDATE users SET first_name = \"%s\", last_name = \"%s\"" +
+		" WHERE id = \"%s\"", firstName, lastName, id)
+
+	_, err = db.Exec(updateStatement)
+	if err != nil {
+		fmt.Println("dao->update: Error With UPDATE statement")
+		fmt.Println(err)
+		fmt.Printf("Update Statement: %s", updateStatement)
 		return err
 	}
 
