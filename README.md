@@ -1,5 +1,5 @@
 # Library Management System - User Service
-This responsibility of this service to provide endpoints to perform CRUD operations on user models.
+This responsibility of this service to provide endpoints to perform CRUD operations on user models.  It only accepts requests from the Node.js authServer application.
 
 ## Tools Used For This Project
 ---
