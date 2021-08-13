@@ -24,14 +24,14 @@ func createDBIfDoesNotExist() (*sql.DB, error) {
 		return nil, err
 	}
 
-	_, err = db.Exec("CREATE DATABASE IF NOT EXISTS BookStore;")
+	_, err = db.Exec("CREATE DATABASE IF NOT EXISTS LibraryManagementSystem;")
 	if err != nil {
 		fmt.Println(err)
 		db.Close()
 		return nil, err
 	}
 
-	_, err = db.Exec("USE BookStore")
+	_, err = db.Exec("USE LibraryManagementSystem")
 	if err != nil {
 		fmt.Println(err)
 		db.Close()
